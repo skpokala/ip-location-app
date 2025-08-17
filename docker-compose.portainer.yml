@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/skpokala/ip-location-app:latest
+    container_name: ip-location-app
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - NEXTAUTH_URL=http://localhost:4000
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key-here}
+    networks:
+      - portainer_network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:4000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ip-location.rule=Host(`ip-location.yourdomain.com`)"
+      - "traefik.http.services.ip-location.loadbalancer.server.port=4000"
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer_data:/data
+    ports:
+      - "9000:9000"
+    networks:
+      - portainer_network
+
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/acme.json:/acme.json
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/config:/config
+    networks:
+      - portainer_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.yourdomain.com`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
+volumes:
+  portainer_data:
+
+networks:
+  portainer_network:
+    name: portainer_network
+    driver: bridge
