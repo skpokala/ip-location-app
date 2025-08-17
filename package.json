@@ -1,13 +1,16 @@
 {
   "name": "ip-location-app",
-  "version": "1.0.5",
+  "version": "1.0.4",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skpokala/ip-location-app.git"
+  },
   "scripts": {
     "dev": "next dev -p 4000",
     "build": "next build",
     "start": "next start -p 4000",
-    "lint": "next lint",
-    "version:bump": "node scripts/bump-version.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
