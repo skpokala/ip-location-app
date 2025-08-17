@@ -4,16 +4,16 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   poweredByHeader: false,
-  experimental: {
-    // This will allow production image to be smaller
-    outputFileTracingRoot: process.env.NODE_ENV === "production" ? "/app" : undefined,
-  },
-  // Ensure we can build even with minor TypeScript errors
+  // Ensure we handle all errors gracefully
   typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
     ignoreBuildErrors: true,
   },
-  // Ensure we can build even with minor ESLint errors
   eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
 };

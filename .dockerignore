@@ -1,16 +1,31 @@
+# Ignore development/build files
 .git
 .gitignore
-README.md
+.env*
 .next
 node_modules
-npm-debug.log
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+npm-debug.log*
+README.md
+.vscode
+.idea
+*.log
+*.swp
+*.swo
+
+# Ignore test files
+__tests__
+*.test.*
+jest.*
+coverage
+
+# Ignore Docker files
+Dockerfile*
+docker-compose*
 .dockerignore
-Dockerfile
-docker-compose.yml
-*.md
-.github
+
+# Ignore other unnecessary files
+.DS_Store
+*.pem
+.eslintrc*
+.prettier*
+.editorconfig
