@@ -34,25 +34,51 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          mkdir -p src
+
+      - name: Create version file if not exists
+        run: |
+          mkdir -p src
+          if [ ! -f src/version.ts ]; then
+            echo "export const version = '1.0.0';" > src/version.ts
+          fi
 
       - name: Bump version
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # Create version bump script
           mkdir -p scripts
           cat > scripts/bump-version.js << 'EOL'
           const fs = require('fs');
           const path = require('path');
 
+          // Ensure directories exist
+          const srcDir = path.join(__dirname, '..', 'src');
+          if (!fs.existsSync(srcDir)) {
+            fs.mkdirSync(srcDir, { recursive: true });
+          }
+
           // Read package.json
           const packageJsonPath = path.join(__dirname, '..', 'package.json');
-          const versionFilePath = path.join(__dirname, '..', 'src', 'version.ts');
-          const packageJson = require(packageJsonPath);
+          const versionFilePath = path.join(srcDir, 'version.ts');
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+          // Get current version from version.ts if it exists, otherwise from package.json
+          let currentVersion = packageJson.version;
+          if (fs.existsSync(versionFilePath)) {
+            const versionContent = fs.readFileSync(versionFilePath, 'utf8');
+            const versionMatch = versionContent.match(/version\s*=\s*['"]([^'"]+)['"]/);
+            if (versionMatch) {
+              currentVersion = versionMatch[1];
+            }
+          }
 
           // Increment version
-          const currentVersion = packageJson.version;
           const [major, minor, patch] = currentVersion.split('.').map(Number);
           const newVersion = `${major}.${minor}.${patch + 1}`;
 
@@ -65,10 +91,18 @@ jobs:
 
           console.log(`Version bumped from ${currentVersion} to ${newVersion}`);
           EOL
+
+          # Run version bump script
           node scripts/bump-version.js
-          git add package.json src/version.ts
-          git commit -m "chore: bump version [skip ci]" || echo "No version bump needed"
-          git push
+
+          # Check if there are changes to commit
+          if git diff --quiet package.json src/version.ts; then
+            echo "No version changes to commit"
+          else
+            git add package.json src/version.ts
+            git commit -m "chore: bump version [skip ci]"
+            git push
+          fi
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
