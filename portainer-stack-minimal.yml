@@ -11,14 +11,9 @@ services:
       - NODE_ENV=production
       - NEXTAUTH_URL=http://localhost:4000
       - NEXTAUTH_SECRET=your-random-secret-key-change-this
-      # IP Location API settings
-      - IP_API_URL=http://ip-api.com/json
-      - IP_API_FIELDS=status,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query
-      - IP_API_LANG=en
-      # Enable IP location features
-      - ENABLE_IP_LOCATION=true
-      # Allow CORS for development
-      - CORS_ORIGIN=http://localhost:4000
+      # CORS settings
+      - NEXT_PUBLIC_IP_API_URL=http://ip-api.com/json
+      - NEXT_PUBLIC_ENABLE_IP_LOCATION=true
     networks:
       - app_network
     healthcheck:
