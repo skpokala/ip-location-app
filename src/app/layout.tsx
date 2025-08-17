@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
-import { Footer } from '@/components/Footer';
-
-const inter = Inter({ subsets: ['latin'] });
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'IP Location App',
@@ -18,11 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} pb-16`}>
-        <Providers>
-          {children}
-          <Footer />
-        </Providers>
+      <body className="font-sans">
+        <Providers>{children}</Providers>
+        <Footer />
       </body>
     </html>
   );

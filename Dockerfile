@@ -13,7 +13,7 @@ COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build Next.js
 RUN npm run build
@@ -22,8 +22,8 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -40,8 +40,8 @@ RUN chown -R nextjs:nodejs /app
 USER nextjs
 
 # Set environment variables
-ENV PORT 4000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=4000
+ENV HOSTNAME="0.0.0.0"
 
 # Expose port
 EXPOSE 4000
