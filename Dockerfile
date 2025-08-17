@@ -3,60 +3,48 @@ FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
-# Install dependencies based on the preferred package manager
-COPY package.json ./
-COPY package-lock.json* ./
+COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p .next
-
-# Next.js collects completely anonymous telemetry data about general usage.
-ENV NEXT_TELEMETRY_DISABLED=1
+# Next.js telemetry
+ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the application
 RUN npm run build
-
-# If you need to use standalone output
-RUN cp -r .next/static .next/standalone/.next/
-RUN cp -r public .next/standalone/
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
-# Set environment variables
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PORT=4000 \
-    HOSTNAME="0.0.0.0"
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs && \
-    mkdir -p /app && \
-    chown -R nextjs:nodejs /app
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
 
-# Set user
-USER nextjs
-
-# Copy built application
+# Automatically leverage output traces to reduce image size
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Expose port
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=4000
+ENV HOSTNAME="0.0.0.0"
+
+USER nextjs
+
 EXPOSE 4000
 
-# Start the application
+# Start the server
 CMD ["node", "server.js"]
