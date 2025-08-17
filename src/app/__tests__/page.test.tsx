@@ -2,6 +2,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Home from '../page';
 
+// Mock window.location
+const mockReload = jest.fn();
+Object.defineProperty(window, 'location', {
+  value: { reload: mockReload },
+  writable: true
+});
+
 const mockIpData = {
   query: '192.168.1.1',
   city: 'Test City',
@@ -21,17 +28,18 @@ const mockIpData = {
   hosting: true
 };
 
-// Mock fetch
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve(mockIpData)
-  })
-) as jest.Mock;
-
 describe('Home Page', () => {
   beforeEach(() => {
-    (fetch as jest.Mock).mockClear();
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+    
+    // Reset fetch mock
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockIpData)
+      })
+    ) as jest.Mock;
   });
 
   it('renders loading state initially', () => {
@@ -68,9 +76,9 @@ describe('Home Page', () => {
 
   it('handles fetch error', async () => {
     const errorMessage = 'Failed to fetch';
-    (fetch as jest.Mock).mockImplementationOnce(() =>
+    global.fetch = jest.fn(() =>
       Promise.reject(new Error(errorMessage))
-    );
+    ) as jest.Mock;
 
     render(<Home />);
     
@@ -84,13 +92,13 @@ describe('Home Page', () => {
   });
 
   it('handles API error response', async () => {
-    (fetch as jest.Mock).mockImplementationOnce(() =>
+    global.fetch = jest.fn(() =>
       Promise.resolve({
         ok: false,
         status: 429,
         json: () => Promise.resolve({ error: 'Rate limit exceeded' })
       })
-    );
+    ) as jest.Mock;
 
     render(<Home />);
     
@@ -101,25 +109,17 @@ describe('Home Page', () => {
 
   it('handles retry button click', async () => {
     const user = userEvent.setup();
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     
-    // First request fails
-    (fetch as jest.Mock).mockImplementationOnce(() =>
+    // Mock fetch to fail
+    global.fetch = jest.fn(() =>
       Promise.reject(new Error('Failed to fetch'))
-    );
+    ) as jest.Mock;
 
-    const { rerender } = render(<Home />);
+    render(<Home />);
 
     // Wait for error state
     await waitFor(() => {
       expect(screen.getByText(/failed to fetch/i)).toBeInTheDocument();
-    });
-
-    // Mock window.location.reload
-    const reloadMock = jest.fn();
-    Object.defineProperty(window, 'location', {
-      value: { reload: reloadMock },
-      writable: true
     });
 
     // Click retry button
@@ -127,8 +127,33 @@ describe('Home Page', () => {
     await user.click(retryButton);
 
     // Verify reload was called
-    expect(reloadMock).toHaveBeenCalled();
+    expect(mockReload).toHaveBeenCalled();
+  });
 
-    consoleSpy.mockRestore();
+  it('handles undefined response', async () => {
+    // Mock fetch to return undefined
+    global.fetch = jest.fn(() => Promise.resolve(undefined)) as jest.Mock;
+
+    render(<Home />);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/no response received/i)).toBeInTheDocument();
+    });
+  });
+
+  it('handles invalid data response', async () => {
+    // Mock fetch to return invalid data
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ invalid: 'data' })
+      })
+    ) as jest.Mock;
+
+    render(<Home />);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/invalid ip data/i)).toBeInTheDocument();
+    });
   });
 });

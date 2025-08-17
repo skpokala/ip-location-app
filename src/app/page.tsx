@@ -29,8 +29,16 @@ export default function Home() {
   useEffect(() => {
     const fetchIpInfo = async () => {
       try {
+        if (typeof window === 'undefined') {
+          throw new Error('Cannot fetch IP info during server-side rendering');
+        }
+
         const response = await fetch('/api/ip');
         
+        if (!response) {
+          throw new Error('No response received from IP API');
+        }
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.error || `Failed to fetch IP information: ${response.status}`);
@@ -38,7 +46,7 @@ export default function Home() {
         
         const data = await response.json();
         
-        if (!data.query) {
+        if (!data || !data.query) {
           throw new Error('Invalid IP data received');
         }
         
