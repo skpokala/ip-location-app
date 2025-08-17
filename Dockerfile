@@ -1,49 +1,44 @@
-FROM node:20-alpine AS base
+# Use Node.js LTS
+FROM node:20-alpine as builder
 
-# Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# Set working directory
 WORKDIR /app
-COPY package.json package-lock.json* ./
+
+# Install dependencies
+COPY package*.json ./
 RUN npm ci
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy source
 COPY . .
 
-# Next.js telemetry
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Build the application
+# Build application
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# Production image
+FROM node:20-alpine
 WORKDIR /app
 
-# Don't run production as root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Copy necessary files
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    chown -R nextjs:nodejs /app
 
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=4000
-ENV HOSTNAME="0.0.0.0"
-
+# Switch to non-root user
 USER nextjs
 
+# Set environment variables
+ENV NODE_ENV=production \
+    PORT=4000 \
+    HOSTNAME=0.0.0.0
+
+# Expose port
 EXPOSE 4000
 
-# Start the server
+# Start the application
 CMD ["node", "server.js"]
