@@ -10,42 +10,79 @@ A modern web application that displays your public IP address and location infor
 - 🔐 Password management
 - 🐳 Docker support
 
-## Running with Docker
+## Self-Hosting Guide
 
-### Using GitHub Container Registry
+### Prerequisites
 
-```bash
-# Pull the image
-docker pull ghcr.io/[your-username]/ip-location-app:latest
+- Docker and Docker Compose installed on your system
+- A domain name (optional, but recommended for production)
 
-# Run the container
-docker run -p 4000:4000 \
-  -e NEXTAUTH_URL=http://localhost:4000 \
-  -e NEXTAUTH_SECRET=your-secret-key-here \
-  ghcr.io/[your-username]/ip-location-app:latest
-```
+### Quick Start
 
-### Using Docker Compose
+1. Create a `.env` file in the root directory:
+   ```env
+   NEXTAUTH_SECRET=your-secure-random-string  # Generate this securely
+   NEXTAUTH_URL=http://localhost:4000         # Change to your domain in production
+   ```
 
-```bash
-# Clone the repository
-git clone https://github.com/[your-username]/ip-location-app.git
-cd ip-location-app
+2. Start the application:
+   ```bash
+   docker compose up -d
+   ```
 
-# Start the application
-docker compose up
-```
+3. Access the application at `http://localhost:4000`
 
-## Environment Variables
-
-- `NEXTAUTH_URL`: The base URL of your application (default: http://localhost:4000)
-- `NEXTAUTH_SECRET`: Secret key for NextAuth.js session encryption
-- `PORT`: The port to run the application on (default: 4000)
-
-## Default Login Credentials
+### Default Login Credentials
 
 - Username: admin
 - Password: password123
+
+⚠️ **Important**: Change the default password after first login in production!
+
+### Production Deployment
+
+For production deployment, make sure to:
+
+1. Generate a secure random string for `NEXTAUTH_SECRET`:
+   ```bash
+   openssl rand -base64 32
+   ```
+
+2. Update `NEXTAUTH_URL` to your domain:
+   ```env
+   NEXTAUTH_URL=https://your-domain.com
+   ```
+
+3. Set up SSL/TLS using a reverse proxy (e.g., Nginx, Traefik) for HTTPS.
+
+4. Configure proper firewall rules to only expose port 4000.
+
+### Updating the Application
+
+To update to the latest version:
+
+```bash
+# Pull the latest image
+docker compose pull
+
+# Restart the containers
+docker compose up -d
+```
+
+### Monitoring
+
+Check application status:
+```bash
+# View logs
+docker compose logs -f
+
+# Check container status
+docker compose ps
+```
+
+### Backup
+
+The application is stateless, but make sure to backup your `.env` file and any custom configurations.
 
 ## Development
 
