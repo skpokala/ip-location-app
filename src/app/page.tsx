@@ -29,10 +29,6 @@ export default function Home() {
   useEffect(() => {
     const fetchIpInfo = async () => {
       try {
-        if (typeof window === 'undefined') {
-          throw new Error('Cannot fetch IP info during server-side rendering');
-        }
-
         const response = await fetch('/api/ip');
         
         if (!response) {
@@ -81,16 +77,16 @@ export default function Home() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="flex min-h-screen flex-col items-center justify-center p-24">
         <h1 className="text-4xl font-bold">IP Location App</h1>
         <p className="mt-4">Loading IP information...</p>
-      </main>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="flex min-h-screen flex-col items-center justify-center p-24">
         <h1 className="text-4xl font-bold">IP Location App</h1>
         <p className="mt-4 text-red-500">Error: {error}</p>
         <button 
@@ -99,12 +95,12 @@ export default function Home() {
         >
           Try Again
         </button>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <div className="flex min-h-screen flex-col items-center justify-center p-24">
       <h1 className="text-4xl font-bold mb-8">IP Location App</h1>
       
       {ipInfo && (
@@ -178,6 +174,6 @@ export default function Home() {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }
