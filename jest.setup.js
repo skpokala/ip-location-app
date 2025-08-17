@@ -1,10 +1,29 @@
-// Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
 // Mock fetch globally
 global.fetch = jest.fn();
 
-// Reset mocks before each test
+// Mock window.location
+Object.defineProperty(window, 'location', {
+  value: {
+    reload: jest.fn(),
+  },
+  writable: true,
+});
+
+// Mock console.error to avoid noise in test output
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    (args[0].includes('Warning:') || args[0].includes('Error:'))
+  ) {
+    return;
+  }
+  originalConsoleError.call(console, ...args);
+};
+
+// Reset all mocks before each test
 beforeEach(() => {
-  jest.resetAllMocks();
+  jest.clearAllMocks();
 });

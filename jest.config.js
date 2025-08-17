@@ -27,7 +27,16 @@ const customJestConfig = {
       statements: 70,
     },
   },
+  testEnvironmentOptions: {
+    url: 'http://localhost:4000',
+  },
+  globals: {
+    'process.env': {
+      NEXT_PUBLIC_IP_API_URL: 'http://ip-api.com/json',
+      NEXT_PUBLIC_IP_API_FIELDS: 'query,city,country,regionName,timezone,isp,org,lat,lon',
+      NEXT_PUBLIC_CORS_ORIGIN: '*',
+      NEXTAUTH_URL: 'http://localhost:4000',
+      NEXTAUTH_SECRET: 'test-secret-for-ci',
+    },
+  },
 };
-
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
