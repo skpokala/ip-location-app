@@ -7,8 +7,9 @@ RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-RUN npm install
+COPY package.json ./
+COPY package-lock.json* ./
+RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -18,39 +19,44 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p public .next
+RUN mkdir -p .next
 
 # Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build the application
 RUN npm run build
+
+# If you need to use standalone output
+RUN cp -r .next/static .next/standalone/.next/
+RUN cp -r public .next/standalone/
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=4000
-ENV HOSTNAME="0.0.0.0"
+# Set environment variables
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=4000 \
+    HOSTNAME="0.0.0.0"
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    mkdir -p /app && \
+    chown -R nextjs:nodejs /app
 
-# Create necessary directories
-RUN mkdir -p public .next
-RUN chown nextjs:nodejs public .next
-
-# Copy public directory if it exists, create if it doesn't
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
+# Set user
 USER nextjs
 
+# Copy built application
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Expose port
 EXPOSE 4000
 
+# Start the application
 CMD ["node", "server.js"]
