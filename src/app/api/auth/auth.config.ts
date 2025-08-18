@@ -1,6 +1,7 @@
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
+import { verify } from 'otplib';
 
 // In a real app, this would be in a database
 let user = {
@@ -42,7 +43,15 @@ export const authOptions: AuthOptions = {
           if (!credentials.totp) {
             throw new Error('TOTP_REQUIRED');
           }
-          // TOTP verification will be added later
+          
+          try {
+            const isValidTOTP = verify(credentials.totp, user.totpSecret);
+            if (!isValidTOTP) {
+              throw new Error('Invalid TOTP code');
+            }
+          } catch (error) {
+            throw new Error('Invalid TOTP code');
+          }
         }
 
         return {
@@ -101,4 +110,12 @@ export function enableTOTP(secret: string) {
 export function disableTOTP() {
   user.totpSecret = null;
   user.totpEnabled = false;
+}
+
+// Function to get TOTP status
+export function getTOTPStatus() {
+  return {
+    enabled: user.totpEnabled,
+    secret: user.totpSecret,
+  };
 }
