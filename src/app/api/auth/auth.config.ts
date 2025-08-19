@@ -8,7 +8,7 @@ let user = {
   id: '1',
   username: 'admin',
   // Initial password hash for 'password'
-  passwordHash: '$2a$10$8HxZqXxQYoYxkg0r3hHkG.kK.uN.bCYHrQQF2QHxB3UqXGrDpBJeO',
+  passwordHash: '$2b$10$0OXdnHEfFl4vDR4NRnxHfezacsmjqpXLo8Hmjtp2woPei35ySbzi6',
   totpSecret: null as string | null,
   totpEnabled: false,
 };
