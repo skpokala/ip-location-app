@@ -5,7 +5,6 @@ import Footer from '@/components/Footer';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './api/auth/auth.config';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'IP Location App',
@@ -17,26 +16,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const pathname = headersList.get('x-pathname') || headersList.get('x-invoke-path') || '';
-  
-  // Allow API routes to be accessed without authentication
-  // Check multiple possible pathname formats for API routes
-  if (pathname.startsWith('/api/') || pathname.includes('/api/') || pathname === '/api/ip') {
-    return (
-      <html lang="en">
-        <body className="font-sans">
-          <Providers>
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
-          </Providers>
-        </body>
-      </html>
-    );
-  }
-
   try {
     const session = await getServerSession(authOptions);
     const isLoginPage = children.toString().includes('login');
