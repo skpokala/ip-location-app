@@ -34,9 +34,9 @@ export default async function RootLayout({
                 {children}
               </main>
               <Footer />
-            </body>
-          </html>
-        </Providers>
+            </Providers>
+          </body>
+        </html>
       );
     }
 
@@ -69,8 +69,8 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
-        </body>
-      </html>
+        </Providers>
+      </body>
     </html>
   );
 }
