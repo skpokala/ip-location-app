@@ -56,5 +56,5 @@ ENV HOSTNAME=0.0.0.0
 # Expose port
 EXPOSE 4000
 
-# Start the server
+# Start the server with proper host binding
 CMD ["node", "server.js"]

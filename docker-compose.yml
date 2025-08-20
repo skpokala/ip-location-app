@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     image: ghcr.io/skpokala/ip-location-app:latest
@@ -11,7 +9,9 @@ services:
       - PORT=4000
       - HOSTNAME=0.0.0.0
       - NEXTAUTH_URL=http://localhost:4000
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key-here}  # Change this in production
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key-here}
+      - NEXT_PUBLIC_IP_API_URL=http://ip-api.com/json
+      - NEXT_PUBLIC_IP_API_FIELDS=query,city,country,countryCode,region,regionName,district,zip,lat,lon,timezone,isp,org,as,reverse,mobile,proxy,hosting
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://localhost:4000"]
       interval: 30s

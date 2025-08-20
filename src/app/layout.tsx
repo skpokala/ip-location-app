@@ -36,33 +36,26 @@ export default async function RootLayout({
     );
   }
 
-  // For local development, allow access to main page without authentication
-  if (process.env.NODE_ENV === 'development') {
-    return (
-      <html lang="en">
-        <body className="font-sans">
-          <Providers>
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
-          </Providers>
-        </body>
-      </html>
-    );
-  }
+  try {
+    const session = await getServerSession(authOptions);
+    const isLoginPage = children.toString().includes('login');
 
-  const session = await getServerSession(authOptions);
-  const isLoginPage = children.toString().includes('login');
+    // If not logged in and not on login page, redirect to login
+    if (!session && !isLoginPage) {
+      redirect('/login');
+    }
 
-  // If not logged in and not on login page, redirect to login
-  if (!session && !isLoginPage) {
-    redirect('/login');
-  }
-
-  // If logged in and on login page, redirect to home
-  if (session && isLoginPage) {
-    redirect('/');
+    // If logged in and on login page, redirect to home
+    if (session && isLoginPage) {
+      redirect('/');
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    // If there's an authentication error, allow access to login page
+    const isLoginPage = children.toString().includes('login');
+    if (!isLoginPage) {
+      redirect('/login');
+    }
   }
 
   return (
