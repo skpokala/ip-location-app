@@ -35,17 +35,11 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy the entire app
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN chown nextjs:nodejs .next
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 USER nextjs
 
@@ -56,5 +50,5 @@ ENV HOSTNAME=0.0.0.0
 # Expose port
 EXPOSE 4000
 
-# Start the server with proper host binding
-CMD ["node", "server.js"]
+# Start the server with npm start
+CMD ["npm", "start"]

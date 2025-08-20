@@ -21,7 +21,8 @@ export default async function RootLayout({
   const pathname = headersList.get('x-pathname') || headersList.get('x-invoke-path') || '';
   
   // Allow API routes to be accessed without authentication
-  if (pathname.startsWith('/api/')) {
+  // Check multiple possible pathname formats for API routes
+  if (pathname.startsWith('/api/') || pathname.includes('/api/') || pathname === '/api/ip') {
     return (
       <html lang="en">
         <body className="font-sans">

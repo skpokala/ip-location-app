@@ -1,11 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
   poweredByHeader: false,
   experimental: {
-    // Ensure proper server behavior in standalone mode
+    // Ensure proper server behavior
     serverComponentsExternalPackages: [],
   },
   // Ensure we handle all errors gracefully
