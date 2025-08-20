@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 
 interface IPInfo {
@@ -23,9 +25,38 @@ interface IPInfo {
 }
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [ipInfo, setIpInfo] = useState<IPInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Handle authentication
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+    
+    if (!session) {
+      router.push('/login');
+      return;
+    }
+  }, [session, status, router]);
+
+  // Don't render anything while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold">IP Location App</h1>
+          <p className="mt-4">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (!session) {
+    return null;
+  }
 
   useEffect(() => {
     const fetchIpInfo = async () => {
