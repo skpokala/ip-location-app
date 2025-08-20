@@ -1,7 +1,7 @@
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { verify } from 'otplib';
+import { authenticator } from 'otplib';
 
 // In a real app, this would be in a database
 let user = {
@@ -45,7 +45,7 @@ export const authOptions: AuthOptions = {
           }
           
           try {
-            const isValidTOTP = verify(credentials.totp, user.totpSecret);
+            const isValidTOTP = authenticator.verify({ token: credentials.totp, secret: user.totpSecret });
             if (!isValidTOTP) {
               throw new Error('Invalid TOTP code');
             }
@@ -62,9 +62,6 @@ export const authOptions: AuthOptions = {
       }
     })
   ],
-  pages: {
-    signIn: '/login',
-  },
   callbacks: {
     async jwt({ token, user: authUser }) {
       if (authUser) {
