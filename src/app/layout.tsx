@@ -2,9 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Providers from '@/components/Providers';
 import Footer from '@/components/Footer';
-import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/auth.config';
-import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'IP Location App',
@@ -16,21 +13,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    // Simple approach: if there's no session, allow access to all pages
-    // The individual pages will handle their own authentication logic
-    if (!session) {
-      // Allow access to all pages when not authenticated
-      // Individual pages will redirect to login if needed
-    }
-  } catch (error) {
-    console.error('Authentication error:', error);
-    // If there's an authentication error, allow access to all pages
-    // Individual pages will handle their own authentication logic
-  }
-
+  // Remove server-side authentication check to prevent NEXT_REDIRECT errors
+  // Authentication will be handled client-side in individual pages
+  
   return (
     <html lang="en">
       <body className="font-sans">
