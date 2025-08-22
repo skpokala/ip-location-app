@@ -1,10 +1,10 @@
 {
   "name": "ip-location-app",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/skpokala/ip-location-app.git"
+    "url": "git+https://github.com/skpokala/ip-location-app.git"
   },
   "scripts": {
     "dev": "next dev -p 4000",
@@ -13,24 +13,23 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "bcryptjs": "^3.0.2",
     "next": "14.1.0",
-    "next-auth": "^4.24.11",
-    "otplib": "^12.0.1",
-    "qrcode": "^1.5.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18",
+    "react-dom": "^18",
+    "next-auth": "^4.24.5",
+    "bcryptjs": "^2.4.3",
+    "otplib": "^12.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "autoprefixer": "^10.4.17",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0",
-    "postcss": "^8.4.35",
+    "@types/bcryptjs": "^2.4.6",
+    "typescript": "^5",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0"
   }
 }
