@@ -129,7 +129,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
-      <div className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-12 lg:p-24">
         {loading ? (
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
@@ -148,68 +148,68 @@ export default function Home() {
           </div>
         ) : ipInfo && (
           <>
-            <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">IP Location Information</h1>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-2xl w-full border border-gray-200 dark:border-gray-700">
-              <div className="grid grid-cols-1 gap-6">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-8 text-gray-900 dark:text-white text-center px-4">IP Location Information</h1>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mx-4 max-w-2xl w-full border border-gray-200 dark:border-gray-700">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 {/* IP Address Section */}
                 <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                  <h2 className="text-2xl font-semibold text-center text-gray-900 dark:text-white">{ipInfo.query}</h2>
-                  <p className="text-gray-500 dark:text-gray-400 text-center">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-center text-gray-900 dark:text-white break-all">{ipInfo.query}</h2>
+                  <p className="text-gray-500 dark:text-gray-400 text-center text-sm sm:text-base">
                     {ipInfo.reverse ? `(${ipInfo.reverse})` : 'IP Address'}
                   </p>
                 </div>
                 
                 {/* Location Section */}
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Location Details</h3>
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-lg mb-2 text-gray-900 dark:text-white">{formatAddress(ipInfo)}</p>
-                    <p className="text-gray-600 dark:text-gray-300">
+                <div className="space-y-3 sm:space-y-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Location Details</h3>
+                  <div className="bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded-lg">
+                    <p className="text-base sm:text-lg mb-2 text-gray-900 dark:text-white break-words">{formatAddress(ipInfo)}</p>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                       Coordinates: {formatCoordinates(ipInfo.lat, ipInfo.lon)}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                       Timezone: {ipInfo.timezone}
                     </p>
                   </div>
                 </div>
                 
                 {/* Network Section */}
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Network Information</h3>
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Network Information</h3>
+                  <div className="bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded-lg">
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">ISP</p>
-                        <p className="text-gray-600 dark:text-gray-300">{ipInfo.isp}</p>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">ISP</p>
+                        <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base break-words">{ipInfo.isp}</p>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Organization</p>
-                        <p className="text-gray-600 dark:text-gray-300">{ipInfo.org}</p>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">Organization</p>
+                        <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base break-words">{ipInfo.org}</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 
                 {/* Connection Type */}
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Connection Type</h3>
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Connection Type</h3>
+                  <div className="bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded-lg">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
                       <div className="text-center">
-                        <p className="font-medium text-gray-900 dark:text-white">Mobile</p>
-                        <p className={ipInfo.mobile ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">Mobile</p>
+                        <p className={`text-sm sm:text-base ${ipInfo.mobile ? 'text-green-500 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           {ipInfo.mobile ? 'Yes' : 'No'}
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium text-gray-900 dark:text-white">Proxy/VPN</p>
-                        <p className={ipInfo.proxy ? 'text-yellow-500 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400'}>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">Proxy/VPN</p>
+                        <p className={`text-sm sm:text-base ${ipInfo.proxy ? 'text-yellow-500 dark:text-yellow-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           {ipInfo.proxy ? 'Yes' : 'No'}
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium text-gray-900 dark:text-white">Hosting</p>
-                        <p className={ipInfo.hosting ? 'text-blue-500 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">Hosting</p>
+                        <p className={`text-sm sm:text-base ${ipInfo.hosting ? 'text-blue-500 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           {ipInfo.hosting ? 'Yes' : 'No'}
                         </p>
                       </div>
