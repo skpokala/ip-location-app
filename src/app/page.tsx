@@ -32,60 +32,26 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch by ensuring component is mounted
+  // Always call all hooks first, regardless of early returns
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Handle authentication
+  // Handle authentication redirect
   useEffect(() => {
-    if (!mounted) return; // Don't redirect until component is mounted
+    if (!mounted) return;
     
-    if (status === 'loading') return; // Still loading
+    if (status === 'loading') return;
     
     if (!session) {
       router.push('/login');
-      return;
     }
   }, [session, status, router, mounted]);
 
-  // Don't render anything until mounted to prevent hydration mismatch
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while checking authentication
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Checking authentication...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render if not authenticated
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Redirecting to login...</p>
-        </div>
-      </div>
-    );
-  }
-
+  // Fetch IP info when authenticated
   useEffect(() => {
+    if (!mounted || !session || status === 'loading') return;
+
     const fetchIpInfo = async () => {
       try {
         const response = await fetch('/api/ip');
@@ -115,7 +81,33 @@ export default function Home() {
     };
 
     fetchIpInfo();
-  }, []);
+  }, [mounted, session, status]);
+
+  // Render loading state while mounting or checking auth
+  if (!mounted || status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            {!mounted ? 'Loading...' : 'Checking authentication...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Render redirect state if not authenticated
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   const formatCoordinates = (lat: number, lon: number) => {
     const latDir = lat >= 0 ? 'N' : 'S';

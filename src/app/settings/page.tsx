@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
+import Navigation from '@/components/Navigation';
 
 interface TOTPStatus {
   enabled: boolean;
@@ -156,171 +157,174 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900">Settings</h2>
-        </div>
-
-        <div className="mt-8 space-y-6">
-          {/* Password Change Section */}
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" onSubmit={handlePasswordChange}>
-              <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
-              
-              <div>
-                <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">
-                  Current Password
-                </label>
-                <input
-                  id="oldPassword"
-                  name="oldPassword"
-                  type="password"
-                  required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                  New Password
-                </label>
-                <input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm New Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  {isLoading ? 'Changing Password...' : 'Change Password'}
-                </button>
-              </div>
-            </form>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Navigation />
+      <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md mx-auto">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Settings</h2>
           </div>
 
-          {/* TOTP Section */}
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Two-Factor Authentication</h3>
-            
-            {!totpStatus.enabled ? (
-              <div>
-                <p className="text-sm text-gray-600 mb-4">
-                  Enable two-factor authentication using TOTP for enhanced security.
-                </p>
-                <button
-                  onClick={handleEnableTOTP}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  Enable TOTP
-                </button>
-              </div>
-            ) : (
-              <div>
-                <p className="text-sm text-gray-600 mb-4">
-                  Two-factor authentication is currently enabled.
-                </p>
-                <button
-                  onClick={handleDisableTOTP}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Disable TOTP
-                </button>
+          <div className="mt-8 space-y-6">
+            {/* Password Change Section */}
+            <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200 dark:border-gray-700">
+              <form className="space-y-6" onSubmit={handlePasswordChange}>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Change Password</h3>
+                
+                <div>
+                  <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Current Password
+                  </label>
+                  <input
+                    id="oldPassword"
+                    name="oldPassword"
+                    type="password"
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    New Password
+                  </label>
+                  <input
+                    id="newPassword"
+                    name="newPassword"
+                    type="password"
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Confirm New Password
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                  >
+                    {isLoading ? 'Changing Password...' : 'Change Password'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* TOTP Section */}
+            <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Two-Factor Authentication</h3>
+              
+              {!totpStatus.enabled ? (
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Enable two-factor authentication using TOTP for enhanced security.
+                  </p>
+                  <button
+                    onClick={handleEnableTOTP}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800"
+                  >
+                    Enable TOTP
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Two-factor authentication is currently enabled.
+                  </p>
+                  <button
+                    onClick={handleDisableTOTP}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800"
+                  >
+                    Disable TOTP
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* TOTP Setup Modal */}
+            {showTOTPSetup && (
+              <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">TOTP Setup</h3>
+                
+                <div className="text-center mb-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                  </p>
+                  {qrCode && (
+                    <img src={qrCode} alt="TOTP QR Code" className="mx-auto mb-4" />
+                  )}
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    Secret: {totpSecret}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Enter the 6-digit code from your authenticator app to complete setup:
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    placeholder="Enter 6-digit code"
+                    className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    maxLength={6}
+                  />
+                </div>
+
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleVerifyTOTP}
+                    className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                  >
+                    Verify & Enable
+                  </button>
+                  <button
+                    onClick={() => setShowTOTPSetup(false)}
+                    className="flex-1 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             )}
+
+            {/* Sign Out Section */}
+            <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => signOut({ callbackUrl: '/login' })}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
 
-          {/* TOTP Setup Modal */}
-          {showTOTPSetup && (
-            <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">TOTP Setup</h3>
-              
-              <div className="text-center mb-4">
-                <p className="text-sm text-gray-600 mb-4">
-                  Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
-                </p>
-                {qrCode && (
-                  <img src={qrCode} alt="TOTP QR Code" className="mx-auto mb-4" />
-                )}
-                <p className="text-xs text-gray-500 mb-4">
-                  Secret: {totpSecret}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Enter the 6-digit code from your authenticator app to complete setup:
-                </p>
-              </div>
-
-              <div className="mb-4">
-                <input
-                  type="text"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  placeholder="Enter 6-digit code"
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  maxLength={6}
-                />
-              </div>
-
-              <div className="flex space-x-3">
-                <button
-                  onClick={handleVerifyTOTP}
-                  className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Verify & Enable
-                </button>
-                <button
-                  onClick={() => setShowTOTPSetup(false)}
-                  className="flex-1 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Cancel
-                </button>
-              </div>
+          {/* Error and Success Messages */}
+          {error && (
+            <div className="mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+              <p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
             </div>
           )}
 
-          {/* Sign Out Section */}
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              Sign Out
-            </button>
-          </div>
+          {success && (
+            <div className="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4">
+              <p className="text-green-800 dark:text-green-200 text-sm">{success}</p>
+            </div>
+          )}
         </div>
-
-        {/* Error and Success Messages */}
-        {error && (
-          <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-800 text-sm">{error}</p>
-          </div>
-        )}
-
-        {success && (
-          <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
-            <p className="text-green-800 text-sm">{success}</p>
-          </div>
-        )}
       </div>
     </div>
   );
