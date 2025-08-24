@@ -30,19 +30,27 @@ export default function Home() {
   const [ipInfo, setIpInfo] = useState<IPInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by ensuring component is mounted
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Handle authentication
   useEffect(() => {
+    if (!mounted) return; // Don't redirect until component is mounted
+    
     if (status === 'loading') return; // Still loading
     
     if (!session) {
       router.push('/login');
       return;
     }
-  }, [session, status, router]);
+  }, [session, status, router, mounted]);
 
-  // Don't render anything while checking authentication
-  if (status === 'loading') {
+  // Don't render anything until mounted to prevent hydration mismatch
+  if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -53,9 +61,28 @@ export default function Home() {
     );
   }
 
+  // Show loading while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Don't render if not authenticated
   if (!session) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">IP Location App</h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    );
   }
 
   useEffect(() => {
