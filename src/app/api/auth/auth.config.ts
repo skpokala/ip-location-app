@@ -7,8 +7,8 @@ import { authenticator } from 'otplib';
 let user = {
   id: '1',
   username: 'admin',
-  // Initial password hash for 'password'
-  passwordHash: '$2b$10$0OXdnHEfFl4vDR4NRnxHfezacsmjqpXLo8Hmjtp2woPei35ySbzi6',
+  // Password hash from environment variable or default to 'password'
+  passwordHash: process.env.ADMIN_PASSWORD_HASH || '$2b$10$0OXdnHEfFl4vDR4NRnxHfezacsmjqpXLo8Hmjtp2woPei35ySbzi6',
   totpSecret: null as string | null,
   totpEnabled: false,
 };
