@@ -39,19 +39,40 @@ export async function POST(req: NextRequest) {
     const { action, code } = await req.json();
 
     if (action === 'enable') {
-      // Generate new TOTP secret
-      const secret = authenticator.generateSecret();
-      enableTOTP(secret);
-      
-      // Generate QR code
-      const otpauth = authenticator.keyuri(session.user.username, 'IP Location App', secret);
-      const qrCode = await QRCode.toDataURL(otpauth);
-      
-      return NextResponse.json({
-        secret,
-        qrCode,
-        message: 'TOTP enabled successfully'
-      });
+      if (!code) {
+        // First step: Generate new TOTP secret
+        const secret = authenticator.generateSecret();
+        const otpauth = authenticator.keyuri(session.user.username, 'IP Location App', secret);
+        const qrCode = await QRCode.toDataURL(otpauth);
+        
+        return NextResponse.json({
+          secret,
+          qrCode,
+          message: 'TOTP setup initiated. Please verify with a code.'
+        });
+      } else {
+        // Second step: Verify code and enable TOTP
+        const { secret } = await req.json();
+        if (!secret) {
+          return NextResponse.json(
+            { error: 'TOTP secret not provided' },
+            { status: 400 }
+          );
+        }
+
+        const isValid = authenticator.verify({ token: code, secret });
+        if (!isValid) {
+          return NextResponse.json(
+            { error: 'Invalid TOTP code' },
+            { status: 400 }
+          );
+        }
+
+        enableTOTP(secret);
+        return NextResponse.json({
+          message: 'TOTP enabled successfully'
+        });
+      }
     } else if (action === 'disable') {
       disableTOTP();
       return NextResponse.json({
