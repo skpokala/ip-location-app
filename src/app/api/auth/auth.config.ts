@@ -7,8 +7,9 @@ import { authenticator } from 'otplib';
 let user = {
   id: '1',
   username: 'admin',
-  // Password hash from environment variable or default to 'password'
-  passwordHash: process.env.ADMIN_PASSWORD_HASH || '$2b$10$0OXdnHEfFl4vDR4NRnxHfezacsmjqpXLo8Hmjtp2woPei35ySbzi6',
+  // Use password hash from env var, or hash the plain password from env var, or use default hash for 'password'
+  passwordHash: process.env.ADMIN_PASSWORD_HASH || 
+    (process.env.ADMIN_PASSWORD ? bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10) : '$2b$10$0OXdnHEfFl4vDR4NRnxHfezacsmjqpXLo8Hmjtp2woPei35ySbzi6'),
   totpSecret: null as string | null,
   totpEnabled: false,
 };

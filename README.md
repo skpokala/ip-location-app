@@ -23,7 +23,10 @@ A modern web application that displays your public IP address and location infor
    ```env
    NEXTAUTH_SECRET=your-secure-random-string  # Generate this securely
    NEXTAUTH_URL=http://localhost:4000         # Change to your domain in production
-   ADMIN_PASSWORD_HASH=your-bcrypt-hash       # Optional: Set custom admin password hash
+   
+   # Choose ONE of these password options:
+   ADMIN_PASSWORD=your-plain-password         # Option 1: Set admin password in plain text
+   ADMIN_PASSWORD_HASH=your-bcrypt-hash       # Option 2: Set pre-hashed admin password
    ```
 
 2. Start the application:
