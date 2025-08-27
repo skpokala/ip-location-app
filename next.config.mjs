@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   poweredByHeader: false,
+  env: {
+    NEXT_PUBLIC_AUTH_URL: process.env.NEXTAUTH_URL,
+  },
   experimental: {
     // Ensure proper server behavior
     serverComponentsExternalPackages: [],
