@@ -1,14 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import ThemeToggle from './ThemeToggle';
 import { useState } from 'react';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    router.push('/login');
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700">
@@ -46,7 +52,7 @@ export default function Navigation() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
             <ThemeToggle />
             <button
-              onClick={() => signOut({ callbackUrl: `${process.env.NEXT_PUBLIC_AUTH_URL || window.location.origin}/login` })}
+              onClick={handleSignOut}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-900"
             >
               Sign Out
@@ -110,7 +116,7 @@ export default function Navigation() {
               Settings
             </Link>
             <button
-              onClick={() => signOut({ callbackUrl: `${process.env.NEXT_PUBLIC_AUTH_URL || window.location.origin}/login` })}
+              onClick={handleSignOut}
               className="w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-red-600 hover:bg-gray-50 hover:border-red-300 dark:text-red-400 dark:hover:bg-gray-800"
             >
               Sign Out
