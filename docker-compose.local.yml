@@ -4,8 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.local
     container_name: ip-location-app-local
-    ports:
-      - "4000:4000"
+    network_mode: "host"
     environment:
       - NODE_ENV=development
       - PORT=4000
@@ -31,7 +30,4 @@ services:
       start_period: 20s
     restart: unless-stopped
 
-networks:
-  default:
-    name: ip-location-app-local-network
-    driver: bridge
+

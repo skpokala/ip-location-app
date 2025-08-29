@@ -2,8 +2,7 @@ services:
   app:
     image: ghcr.io/skpokala/ip-location-app:latest
     restart: unless-stopped
-    ports:
-      - "4000:4000"
+    network_mode: "host"
     environment:
       - NODE_ENV=production
       - PORT=4000
@@ -21,9 +20,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
-    networks:
-      - app_network
-
-networks:
-  app_network:
-    driver: bridge
