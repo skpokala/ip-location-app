@@ -5,6 +5,13 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 
+interface LocalIPAddress {
+  name: string;
+  address: string;
+  family: string;
+  internal: boolean;
+}
+
 interface IPInfo {
   query: string;
   city: string;
@@ -22,6 +29,7 @@ interface IPInfo {
   mobile: boolean;
   proxy: boolean;
   hosting: boolean;
+  localAddresses?: LocalIPAddress[];
 }
 
 export default function Home() {
@@ -54,24 +62,38 @@ export default function Home() {
 
     const fetchIpInfo = async () => {
       try {
-        const response = await fetch('/api/ip');
+        // Fetch public IP info
+        const publicIpResponse = await fetch('/api/ip');
         
-        if (!response) {
+        if (!publicIpResponse) {
           throw new Error('No response received from IP API');
         }
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Failed to fetch IP information: ${response.status}`);
+        if (!publicIpResponse.ok) {
+          const errorData = await publicIpResponse.json().catch(() => ({}));
+          throw new Error(errorData.error || `Failed to fetch IP information: ${publicIpResponse.status}`);
         }
         
-        const data = await response.json();
+        const publicIpData = await publicIpResponse.json();
         
-        if (!data || !data.query) {
+        if (!publicIpData || !publicIpData.query) {
           throw new Error('Invalid IP data received');
         }
+
+        // Fetch local IP addresses
+        const localIpResponse = await fetch('/api/ip/local');
+        let localAddresses: LocalIPAddress[] = [];
         
-        setIpInfo(data);
+        if (localIpResponse.ok) {
+          const localIpData = await localIpResponse.json();
+          localAddresses = localIpData.addresses || [];
+        }
+        
+        // Combine the data
+        setIpInfo({
+          ...publicIpData,
+          localAddresses
+        });
       } catch (err) {
         console.error('Error fetching IP info:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch IP information');
@@ -216,6 +238,38 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+
+                {/* Local IP Addresses */}
+                {ipInfo.localAddresses && ipInfo.localAddresses.length > 0 && (
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Local IP Addresses</h3>
+                    <div className="bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded-lg">
+                      <div className="space-y-3">
+                        {ipInfo.localAddresses.map((addr, index) => (
+                          <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 dark:border-gray-600 last:border-0 pb-2 last:pb-0">
+                            <div className="flex-1">
+                              <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base break-all">
+                                {addr.address}
+                              </p>
+                              <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+                                {addr.name} ({addr.family})
+                              </p>
+                            </div>
+                            <div className="mt-1 sm:mt-0">
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                addr.internal 
+                                  ? 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300' 
+                                  : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                              }`}>
+                                {addr.internal ? 'Internal' : 'External'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </>
