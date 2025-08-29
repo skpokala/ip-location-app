@@ -4,7 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile.local
     container_name: ip-location-app-local
-    network_mode: "host"
+    ports:
+      - "4000:4000"
     environment:
       - NODE_ENV=development
       - PORT=4000
